@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import {Header} from "./components/Header";
 import {Player} from "./components/Player";
+import {AddPlayerForm} from "./components/AddPlayerForm";
 
 
 class App extends React.Component {
@@ -17,7 +18,9 @@ class App extends React.Component {
   render() {
     return (
       <div className="scoreboard">
-        <Header title="My Scoreboard" totalPlayers={11}/>
+        <Header title="My Scoreboard"
+                players={this.state.players}
+        />
         {
           this.state.players.map((player) => (
             <Player
@@ -30,6 +33,9 @@ class App extends React.Component {
             />
           ))
         }
+        <AddPlayerForm
+          addPlayer={this.handleAddPlayer}
+        />
       </div>
     )
   }
@@ -48,6 +54,20 @@ class App extends React.Component {
 
   handleChangeScore = (id, delta) => {
     console.log('handleChangeScore',id,' ',delta);
+    this.setState(prevState => {
+      // 새로운 배열을 리턴 : deep copy
+      const players = [...prevState.players];
+      players.forEach(player => {
+        if(player.id === id){
+          player.score += delta;
+        }
+      })
+      return { players }
+    })
+  }
+
+  handleAddPlayer = () => {
+    console.log('handleAddPlayer');
   }
 
 }
