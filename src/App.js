@@ -4,6 +4,7 @@ import {Header} from "./components/Header";
 import {Player} from "./components/Player";
 import {AddPlayerForm} from "./components/AddPlayerForm";
 
+let maxId = 4;
 
 class App extends React.Component {
   state = {
@@ -66,8 +67,14 @@ class App extends React.Component {
     })
   }
 
-  handleAddPlayer = () => {
-    console.log('handleAddPlayer');
+  handleAddPlayer = (name) => {
+    console.log('handleAddPlayer: ', name);
+    this.setState(prevState => {
+      const players = [ ...prevState.players ]; //deep copy됨
+      players.push({id:++maxId, name: name, score: 0});//push는 none Immutable임
+      // return { players: players };
+      return { players };
+    })
   }
 
 }
