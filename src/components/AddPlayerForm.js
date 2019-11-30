@@ -42,7 +42,7 @@ export class AddPlayerForm extends React.Component {
   render() {
     return(
         <form className="form" onSubmit={this.handleSubmit.bind(this)} noValidate>
-          <input type="email"
+          <input type="text"
                  id = 'player'
                  className="input"
                  minLength='5'
