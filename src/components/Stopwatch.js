@@ -1,46 +1,63 @@
-import React from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 
-export class Stopwatch extends React.Component {
+export function Stopwatch() {
+	let tickRef;
+	let [isRunning, setIsRunning] = useState(false);
+	let [timer, setTimer] = useState(0);
 
-  tickRef;//클래스의 맴버변수로 정의
-  state = {
-    isRunning : false,
-    timer: 0
-  }
+	// useEffect(() => {
+	// 	//Dom이 렌더링된 후 side effect
+	// 	tickRef = setInterval(tick, 1000);
+	//
+	// 	//componentWillUnmount는 return 펑션
+	// 	return () => {
+	// 		clearInterval(tickRef)
+	// 	}
+	// }, []);//mount될때 한번만 실행시키기 위해 ",[]" 넣어줌
 
-  handleStopwatch() {
-    this.setState(prevState => ({isRunning: !prevState.isRunning}));
-  }
+	//useInterval = useEffect + setInterval 합친거
+	useInterval(() => {
+		// Your custom logic here
+		if (isRunning) {
+			setTimer(timer + 1);
+		}
+	}, 1000);
 
-  render() {
-    return (
-      <div className="stopwatch">
-        <h1 className='h1'>StopWacth</h1>
-        <span className='stopwatch-time'>{this.state.timer}</span>
-        <button onClick={this.handleStopwatch.bind(this)}>{this.state.isRunning ? 'Stop' : 'Start'}</button>
-        <button onClick={() => this.setState({timer : 0})}>Reset</button>
-      </div>
-    );
-  }//end render
+	function tick() {
+		if (isRunning) {
+			// this.setState(prevState => ({timer: prevState.timer + 1}));
+			setTimer(timer + 1);
+		}
+	}
 
-  tick = () => {
-    if(this.state.isRunning){
-      this.setState(prevState => ({timer:prevState.timer + 1})); //JSON 데이터를 리턴하기위해 => ({}) 이렇게 표한함
-    }
-  };
+	return (
+		<div className="stopwatch">
+			<h1 className="h1">StopWatch</h1>
+			<span className="stopwatch-time">{timer}</span>
+			<button onClick={() => setIsRunning(!isRunning)}>{isRunning ? 'Stop' : 'Start'}</button>
+			<button onClick={() => setTimer(0) }>Reset</button>
+		</div>
+	);
 
-  //네트워크로 데이터를 fatch, 3rd 라이브러리 초기화
-  //렌더링된 직후에 한번만 호출됨
-  componentDidMount() {
-    console.log('componentDidMount');
-    this.tickRef = setInterval(this.tick, 1000);
-  };
+	function useInterval(callback, delay) {
+		const savedCallback = useRef();
 
-  //DOM이 파괴되기 직전 실행
-  componentWillUnmount() {
-    clearInterval(this.tickRef);
-  };
+		// Remember the latest callback.
+		useEffect(() => {
+			savedCallback.current = callback;
+		}, [callback]);
 
+		// Set up the interval.
+		useEffect(() => {
+			function tick() {
+				savedCallback.current();
+			}
+			if (delay !== null) {
+				let id = setInterval(tick, delay);
+				return () => clearInterval(id);
+			}
+		}, [delay]);
+	}
 
+}
 
-}//end
